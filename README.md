@@ -2,7 +2,7 @@
 
 # Electron Outlook
 
-The Outlook desktop client.
+The Outlook Office365 desktop client.
 
 ![screenshot_linux](https://user-images.githubusercontent.com/13460738/35953459-a0875872-0ce9-11e8-9bca-880564b9beee.png)
 
