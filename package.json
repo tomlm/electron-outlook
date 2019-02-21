@@ -1,11 +1,11 @@
 {
   "name": "electron-outlook",
-  "productName": "Freelook",
-  "version": "0.1.0",
-  "discription": "Outlook Electron desktop application",
+  "productName": "Outlook Electron",
+  "version": "1.0.1",
+  "description": "Outlook Electron Desktop application",
   "main": "src/main.js",
-  "author": "Howard Ju <howard.ju@outlook.com>",
-  "repository": "https://github.com/eNkru/electron-outlook",
+  "author": "Tom Laird-McConnell",
+  "repository": "https://github.com/tomlm/electron-outlook",
   "license": "MIT",
   "keywords": [
     "Electron",
@@ -18,6 +18,7 @@
     "pack": "electron-builder --dir",
     "dist:linux": "electron-builder --linux AppImage",
     "dist:macOS": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
     "postinstall": "electron-builder install-app-deps",
     "publish": "build -p always"
   },
@@ -29,16 +30,19 @@
     "electron-settings": "^3.2.0"
   },
   "build": {
-    "appId": "nz.co.enkru.${name}",
+    "appId": "tomlm.${name}",
     "linux": {
       "category": "Office",
       "desktop": {
-        "StartupWMClass": "Freelook"
+        "StartupWMClass": "Outlook Electron"
       },
       "target": [
         "AppImage",
         "deb"
       ]
+    },
+    "win": {
+      "target":"msi"
     }
   }
 }
