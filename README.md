@@ -19,7 +19,7 @@ The Outlook Office365 desktop client.
 ## Build & Install
 Clone the repository and run in development mode.
 ```
-git clone https://github.com/eNkru/electron-outlook.git
+git clone https://github.com/tomlm/electron-outlook.git
 cd electron-outlook
 yarn
 yarn start
