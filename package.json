@@ -34,6 +34,7 @@
     "appId": "tomlm.${name}",
     "linux": {
       "category": "Office",
+      "maintainer":"tomlm@microsoft",
       "desktop": {
         "StartupWMClass": "Outlook Electron"
       },
