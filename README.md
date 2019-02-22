@@ -39,7 +39,7 @@ npm publish
 ```
 
 ## Download
-The released application can be downloaded [here](https://github.com/eNkru/electron-outlook/releases).
+The released application can be downloaded [here](https://github.com/tomlm/electron-outlook/releases).
 
 ## License
 [MIT](https://github.com/eNkru/electron-xiami/blob/master/LICENSE) by [Howard J](https://enkru.github.io/)
