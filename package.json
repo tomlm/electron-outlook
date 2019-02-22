@@ -5,6 +5,7 @@
   "description": "Outlook Electron Desktop application",
   "main": "src/main.js",
   "author": "Tom Laird-McConnell",
+  "email":"tomlm@microsoft.com",
   "repository": "https://github.com/tomlm/electron-outlook",
   "license": "MIT",
   "keywords": [
@@ -16,7 +17,7 @@
   "scripts": {
     "start": "electron src/main.js",
     "pack": "electron-builder --dir",
-    "dist:linux": "electron-builder --linux AppImage",
+    "dist:linux": "electron-builder --linux deb",
     "dist:macOS": "electron-builder --mac",
     "dist:win": "electron-builder --win",
     "postinstall": "electron-builder install-app-deps",
@@ -36,10 +37,7 @@
       "desktop": {
         "StartupWMClass": "Outlook Electron"
       },
-      "target": [
-        "AppImage",
-        "deb"
-      ]
+      "target": "deb"
     },
     "win": {
       "target":"msi"
