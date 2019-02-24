@@ -1,8 +1,8 @@
 {
   "name": "electron-outlook",
-  "productName": "Outlook Electron",
-  "version": "1.0.1",
-  "description": "Outlook Electron Desktop application",
+  "productName": "Outlook for Office365",
+  "version": "1.0.2",
+  "description": "Outlook Office365 Desktop application",
   "main": "src/main.js",
   "author": "Tom Laird-McConnell",
   "email":"tomlm@microsoft.com",
@@ -36,7 +36,7 @@
       "category": "Office",
       "maintainer":"tomlm@microsoft",
       "desktop": {
-        "StartupWMClass": "Outlook Electron"
+        "StartupWMClass": "Outlook 365 Desktop Application"
       },
       "target": "deb"
     },
