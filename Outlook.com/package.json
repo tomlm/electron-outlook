@@ -1,7 +1,7 @@
 {
   "name": "electron-outlook-live",
   "productName": "Outlook for Outlook.com",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Outlook Outlook.com Desktop application",
   "main": "src/main.js",
   "author": "Tom Laird-McConnell",
