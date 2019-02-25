@@ -2,7 +2,7 @@
   "name": "outlook.com",
   "productName": "Outlook for Outlook.com",
   "version": "1.0.2",
-  "description": "Outlook Outlook.com Desktop application",
+  "description": "Outlook for Outlook.com Desktop application",
   "main": "src/main.js",
   "author": "Tom Laird-McConnell",
   "email":"tomlm@microsoft.com",
@@ -31,12 +31,12 @@
     "electron-settings": "^3.2.0"
   },
   "build": {
-    "appId": "tomlm.${name}",
+    "appId": "outlook.com",
     "linux": {
       "category": "Office",
       "maintainer":"tomlm@microsoft",
       "desktop": {
-        "StartupWMClass": "Outlook.com Desktop Application"
+        "StartupWMClass": "Outlook for Outlook.com Desktop Application"
       },
       "target": "deb"
     },
