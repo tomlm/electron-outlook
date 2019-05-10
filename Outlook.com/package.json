@@ -1,7 +1,7 @@
 {
   "name": "outlook.com",
   "productName": "Outlook for Outlook.com",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Outlook for Outlook.com Desktop application",
   "main": "src/main.js",
   "author": "Tom Laird-McConnell",
