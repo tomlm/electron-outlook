@@ -1,4 +1,4 @@
-const { BrowserWindow, shell, ipcMain, Menu } = require('electron')
+const { app, BrowserWindow, shell, ipcMain, Menu } = require('electron')
 const settings = require('electron-settings')
 const CssInjector = require('../js/css-injector')
 const path = require('path')
@@ -55,7 +55,7 @@ class MailWindowController {
         this.show();
     }
 
-    createWindow(url) {
+    createWindow(target) {
         // Create the browser window.
         var window = new BrowserWindow({
             x: 100,
@@ -69,7 +69,7 @@ class MailWindowController {
         })
 
         // and load the index.html of the app.
-        window.loadURL(url)
+        window.loadURL(target)
 
         // insert styles
         window.webContents.on('dom-ready', () => {
@@ -87,16 +87,26 @@ class MailWindowController {
             }
         })
 
-        // Open the new window in external browser
-        window.webContents.on('will-navigate', (e, url) => this.openInBrowser(e, url))
-
+        // on navigate events
+        window.webContents.on('will-redirect', (e, url) => this.onWillRedirect(e, url));
+        window.webContents.on('will-navigate', (e, url) => this.onWillNavigate(e, url));
+        window.webContents.on('new-window', (e, url) => this.onNewWindow(e, url));
+        window.webContents.on('did-navigate', (e, url) => this.onDidNavigate(e, url));
+        //window.webContents.openDevTools();
         return window;
+    }
+
+    reload() {
+        this.mail.loadURL(outlookUrl + '/mail');
+        this.calendar.loadURL(outlookUrl + '/calendar');
+        this.people.loadURL(outlookUrl + '/people');
+        this.files.loadURL(outlookUrl + '/files');
     }
 
     toggleWindow() {
         if (this.activeWindow.isFocused())
             this.activeWindow.hide();
-        else 
+        else
             this.activeWindow.show();
     }
 
@@ -125,10 +135,47 @@ class MailWindowController {
         this.activeWindow.focus();
     }
 
-    openInBrowser(e, url) {
-        console.log(`openInBrowser:${url}`);
-        console.log(`activeWindow: ${this.activeWindow.getTitle()}`);
-        if (url.indexOf('/mail') > 0) {
+    onDidNavigate(e, url) {
+        if (!this.sso && url.startsWith("https://login.microsoftonline.com/login.srf")) {
+            console.log(`onDidNavigate: ${url} ${this.activeWindow.getTitle()}`);
+            this.sso = true;
+            if (this.activeWindow != this.mail) {
+                console.log("reload sso");
+                this.mail.reload.loadURL(outlookUrl + '/mail');
+            }
+            if (this.activeWindow != this.calendar) {
+                console.log("reload sso");
+                this.calendar.loadURL(outlookUrl + '/calendar');
+            }
+            if (this.activeWindow != this.people) {
+                console.log("reload sso");
+                this.people.loadURL(outlookUrl + '/people');
+            }
+            if (this.activeWindow != this.files) {
+                console.log("reload sso");
+                this.files.loadURL(outlookUrl + '/files');
+            }
+        }
+    }
+    onWillRedirect(e, url) {
+        console.log(`onWillRedirect: ${url} ${this.activeWindow.getTitle()}`);
+        return;
+    }
+
+    onWillNavigate(e, url) {
+        console.log(`onWillNavigate: ${url} ${this.activeWindow.getTitle()}`);
+
+        if (url.startsWith("https://msft.sts.microsoft.com/adfs/ls/?wa=wsignout1.0")) {
+            console.log('quit');
+            this.mail.close();
+            this.calendar.close();
+            this.people.close();
+            this.files.close();
+            app.quit();
+            e.preventDefault();
+            return;
+        }
+        else if (url.indexOf('/mail') > 0 && url.indexOf("?authRedirect=true") < 0) {
             if (this.activeWindow == this.mail) {
                 e.preventDefault()
                 return;
@@ -137,7 +184,7 @@ class MailWindowController {
             console.log('show mail');
             this.setActiveWindow(this.mail);
             return;
-        } else if (url.indexOf('/calendar') > 0) {
+        } else if (url.indexOf('/calendar') > 0 && url.indexOf("?authRedirect=true") < 0) {
             if (this.activeWindow == this.calendar) {
                 e.preventDefault()
                 return;
@@ -146,7 +193,7 @@ class MailWindowController {
             console.log('show calendar');
             this.setActiveWindow(this.calendar);
             return;
-        } else if (url.indexOf('/people') > 0) {
+        } else if (url.indexOf('/people') > 0 && url.indexOf("?authRedirect=true") < 0) {
             if (this.activeWindow == this.people) {
                 e.preventDefault()
                 return;
@@ -155,7 +202,7 @@ class MailWindowController {
             console.log('show people');
             this.setActiveWindow(this.people);
             return;
-        } else if (url.indexOf('/files') > 0) {
+        } else if (url.indexOf('/files') > 0 && url.indexOf("?authRedirect=true") < 0) {
             if (this.activeWindow == this.files) {
                 e.preventDefault()
                 return;
@@ -173,6 +220,22 @@ class MailWindowController {
             //     this.setActiveWindow(this.todos);
             //     return;
         }
+        else if (url.startsWith("https://msft.sts.microsoft.com/adfs/ls/?wa=wsignout1.0")) {
+            e.preventDefault();
+            return;
+        }
+        return;
+    }
+
+    onNewWindow(e, url) {
+        console.log(`onShowWindow: ${url} ${this.activeWindow.getTitle()}`);
+
+        if (new RegExp(deeplinkUrls.join('|')).test(url)) {
+            // Default action - if the user wants to open mail in a new window - let them.
+            console.log('default action');
+            return;
+        }
+
 
         // load external urls outside of app
         e.preventDefault()
@@ -191,3 +254,5 @@ class MailWindowController {
 }
 
 module.exports = MailWindowController
+
+
