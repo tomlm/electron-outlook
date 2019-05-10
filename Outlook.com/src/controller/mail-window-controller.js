@@ -15,10 +15,10 @@ class MailWindowController {
     init() {
         // Get configurations.
         const showWindowFrame = settings.get('showWindowFrame', true)
-        this.mail = this.createWindow(outlookUrl + '/mail');
-        this.calendar = this.createWindow(outlookUrl + '/calendar');
-        this.people = this.createWindow(outlookUrl + '/people');
-        this.files = this.createWindow(outlookUrl + '/files');
+        this.mail = this.createWindow(outlookUrl + '/mail?nlp=1');
+        this.calendar = this.createWindow(outlookUrl + '/calendar?nlp=1');
+        this.people = this.createWindow(outlookUrl + '/people?nlp=1');
+        this.files = this.createWindow(outlookUrl + '/files?nlp=1');
         //this.todos = this.createWindow('https://to-do.microsoft.com/?fromOwa=true');
 
         // Show window handler
@@ -87,16 +87,24 @@ class MailWindowController {
         })
 
         // on navigate events
-        window.webContents.on('will-navigate', (e, url) => this.openInBrowser(e, url))
-        window.webContents.on('new-window', (e, url) => this.openInBrowser(e, url));
+        window.webContents.on('will-redirect', (e, url) => this.onWillRedirect(e, url));
+        window.webContents.on('will-navigate', (e, url) => this.onWillNavigate(e, url));
+        window.webContents.on('new-window', (e, url) => this.onNewWindow(e, url));
         //window.webContents.openDevTools();
         return window;
+    }
+
+    reload() {
+        this.mail.loadURL(outlookUrl + '/mail?nlp=1');
+        this.calendar.loadURL(outlookUrl + '/calendar?nlp=1');
+        this.people.loadURL(outlookUrl + '/people?nlp=1');
+        this.files.loadURL(outlookUrl + '/files?nlp=1');
     }
 
     toggleWindow() {
         if (this.activeWindow.isFocused())
             this.activeWindow.hide();
-        else 
+        else
             this.activeWindow.show();
     }
 
@@ -125,9 +133,65 @@ class MailWindowController {
         this.activeWindow.focus();
     }
 
-    openInBrowser(e, url) {
-        console.log(`openInBrowser:${url}`);
-        console.log(`activeWindow: ${this.activeWindow.getTitle()}`);
+    onWillRedirect(e, url) {
+        console.log(`onWillRedirect: ${url} ${this.activeWindow.getTitle()}`);
+
+        if (url.startsWith("https://outlook.live.com/owa/auth/dt.aspx")) {
+            console.log('refresh on login');
+            if (this.activeWindow != this.mail && this.mail.webContents.getURL().indexOf("login") > 0) {
+                this.mail.loadURL(outlookUrl + '/mail?nlp=1');
+            }
+            if (this.activeWindow != this.calendar && this.calendar.webContents.getURL().indexOf("login") > 0) {
+                this.calendar.loadURL(outlookUrl + '/calendar?nlp=1');
+            }
+            if (this.activeWindow != this.people && this.people.webContents.getURL().indexOf("login") > 0) {
+                this.people.loadURL(outlookUrl + '/people?nlp=1');
+            }
+            if (this.activeWindow != this.files && this.files.webContents.getURL().indexOf("login") > 0) {
+                this.files.loadURL(outlookUrl + '/files?nlp=1');
+            }
+            return;
+        }
+
+        if (url.indexOf("www.msn.com") > 0 && url.indexOf("ocid=mailsignout") > 0) {
+            e.preventDefault();
+            console.log('reload');
+            this.reload();
+            return;
+        }
+
+        return;
+    }
+
+    onWillNavigate(e, url) {
+        console.log(`onWillNavigate: ${url} ${this.activeWindow.getTitle()}`);
+
+        if (url.startsWith("https://outlook.live.com/owa/logoff.owa") ||
+            url.startsWith("https://login.live.com/logout.srf") ||
+            url.startsWith("https://outlook.live.com/owa/csignout.aspx")) {
+            console.log('loading in window1');
+            e.preventDefault()
+            this.activeWindow.loadURL(url);
+            return;
+        }
+        else if (url.startsWith("https://login.live.com/login.srf")) {
+            console.log('loading in window2');
+            e.preventDefault()
+            this.activeWindow.loadURL(url);
+            return;
+        }
+        return;
+    }
+
+    onNewWindow(e, url) {
+        console.log(`onShowWindow: ${url} ${this.activeWindow.getTitle()}`);
+
+        if (new RegExp(deeplinkUrls.join('|')).test(url)) {
+            // Default action - if the user wants to open mail in a new window - let them.
+            console.log('default action');
+            return;
+        }
+
         if (url.indexOf('/mail') > 0) {
             if (this.activeWindow == this.mail) {
                 e.preventDefault()
