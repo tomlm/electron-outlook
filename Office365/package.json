@@ -1,7 +1,7 @@
 {
   "name": "mail.office365.com",
   "productName": "Outlook for Office365",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Outlook for Office365 Desktop application",
   "main": "src/main.js",
   "author": "Tom Laird-McConnell",
