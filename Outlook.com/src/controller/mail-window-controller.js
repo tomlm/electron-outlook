@@ -43,7 +43,11 @@ class MailWindowController {
                 { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
                 { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
                 { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-                { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+                { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" },
+                { type: "separator" },
+                { label: 'Zoom Reset', accelerator: 'CmdOrCtrl+0', click: () => { this.zoomReset(); } },
+                { label: 'Zoom In', accelerator: 'CmdOrCtrl+Plus', click: () => { this.zoomIn(); } },
+                { label: 'Zoom Out', accelerator: 'CmdOrCtrl+-', click: () => { this.zoomOut(); } }
             ]
         }
         ];
@@ -52,6 +56,33 @@ class MailWindowController {
 
         this.activeWindow = this.mail;
         this.show();
+    }
+
+    zoomOut() {
+        this.mail.webContents.getZoomLevel((level) => {
+            level = level - 1;
+            this.mail.webContents.setZoomLevel(level);
+            this.calendar.webContents.setZoomLevel(level);
+            this.people.webContents.setZoomLevel(level);
+            this.files.webContents.setZoomLevel(level);
+        });
+    }
+
+    zoomIn() {
+        this.mail.webContents.getZoomLevel((level) => {
+            level = level + 1;
+            this.mail.webContents.setZoomLevel(level);
+            this.calendar.webContents.setZoomLevel(level);
+            this.people.webContents.setZoomLevel(level);
+            this.files.webContents.setZoomLevel(level);
+        });
+    }
+
+    zoomReset() {
+        this.mail.webContents.setZoomLevel(0);
+        this.calendar.webContents.setZoomLevel(0);
+        this.people.webContents.setZoomLevel(0);
+        this.files.webContents.setZoomLevel(0);
     }
 
     createWindow(target) {
