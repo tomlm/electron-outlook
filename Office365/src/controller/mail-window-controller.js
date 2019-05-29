@@ -3,10 +3,9 @@ const settings = require('electron-settings')
 const CssInjector = require('../js/css-injector')
 const path = require('path')
 
-const outlookUrl = 'https://mail.office365.com'
+const outlookUrl = 'https://outlook.office365.com'
 const deeplinkUrls = ['outlook-sdf.office.com/mail/deeplink', 'outlook.office365.com/mail/deeplink', 'outlook.office.com/mail/deeplink']
-const outlookUrls = ['outlook-sdf.office.com', 'outlook.office.com', 'outlook.office365.com',
-    'outlook.office365.com/calendar', 'outlook.office365.com/people', 'outlook.office365.com/files']
+const outlookUrls = ['outlook.office365.com', 'outlook.office.com',  'outlook-sdf.office.com']
 
 class MailWindowController {
     constructor() {
@@ -202,7 +201,15 @@ class MailWindowController {
 
     onWillNavigate(e, url) {
         console.log(`onWillNavigate: ${url} ${this.activeWindow.getTitle()}`);
-
+        let isOutlook = false;
+        for(var outlookUrl of outlookUrls)
+        {
+            if (url.indexOf(outlookUrl) > 0)
+            {
+                isOutlook = true;
+                break;
+            }
+        }
         if (url.startsWith("https://msft.sts.microsoft.com/adfs/ls/?wa=wsignout1.0")) {
             console.log('quit');
             this.mail.close();
@@ -213,7 +220,7 @@ class MailWindowController {
             e.preventDefault();
             return;
         }
-        else if (url.indexOf('/mail') > 0 && url.indexOf("?authRedirect=true") < 0) {
+        else if (isOutlook && url.indexOf('/mail') > 0 && url.indexOf("?authRedirect=true") < 0) {
             if (this.activeWindow == this.mail) {
                 e.preventDefault()
                 return;
@@ -222,7 +229,7 @@ class MailWindowController {
             console.log('show mail');
             this.setActiveWindow(this.mail);
             return;
-        } else if (url.indexOf('/calendar') > 0 && url.indexOf("?authRedirect=true") < 0) {
+        } else if (isOutlook && url.indexOf('/calendar') > 0 && url.indexOf("?authRedirect=true") < 0) {
             if (this.activeWindow == this.calendar) {
                 e.preventDefault()
                 return;
@@ -231,7 +238,7 @@ class MailWindowController {
             console.log('show calendar');
             this.setActiveWindow(this.calendar);
             return;
-        } else if (url.indexOf('/people') > 0 && url.indexOf("?authRedirect=true") < 0) {
+        } else if (isOutlook && url.indexOf('/people') > 0 && url.indexOf("?authRedirect=true") < 0) {
             if (this.activeWindow == this.people) {
                 e.preventDefault()
                 return;
@@ -240,7 +247,7 @@ class MailWindowController {
             console.log('show people');
             this.setActiveWindow(this.people);
             return;
-        } else if (url.indexOf('/files') > 0 && url.indexOf("?authRedirect=true") < 0) {
+        } else if (isOutlook && url.indexOf('/files') > 0 && url.indexOf("?authRedirect=true") < 0) {
             if (this.activeWindow == this.files) {
                 e.preventDefault()
                 return;
@@ -273,7 +280,6 @@ class MailWindowController {
             console.log('default action');
             return;
         }
-
 
         // load external urls outside of app
         e.preventDefault()
