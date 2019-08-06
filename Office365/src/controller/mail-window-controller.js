@@ -115,7 +115,6 @@ class MailWindowController {
             // this.addUnreadNumberObserver()
         })
 
-
         // prevent the app quit, hide the window instead.
         window.on('close', (e) => {
             if (window.isVisible()) {
@@ -130,6 +129,27 @@ class MailWindowController {
         window.webContents.on('new-window', (e, url) => this.onNewWindow(e, url));
         window.webContents.on('did-navigate', (e, url) => this.onDidNavigate(e, url));
         //window.webContents.openDevTools();
+
+        window.webContents.on('login', (event, request, authInfo, callback) => {
+            event.preventDefault()
+            const loginWindow = new BrowserWindow({
+                parent: window,
+                modal: true,
+                width: 450,
+                height: 250,
+                webPreferences: {
+                    nodeIntegration: true,
+                }
+            })
+
+            loginWindow.loadURL(`file://${path.join(__dirname, '../view/basic-auth-form.html')}`)
+
+            ipcMain.on('form-submission', (event, username, password) => {
+                callback(username, password)
+                loginWindow.destroy()
+            })
+        })
+
         return window;
     }
 

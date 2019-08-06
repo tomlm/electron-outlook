@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Basic Auth Request</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+</head>
+
+<style type="text/css">
+    body > .grid {
+        height: 100%;
+    }
+    .column {
+        max-width: 450px;
+    }
+</style>
+
+<body>
+    <div class="ui middle aligned center aligned grid">
+        <div class="column">
+            <form class="ui large form" action="#" id="basic-auth-form">
+                <div class="inline field">
+                    <label>Username</label>
+                    <input type="text" id="username">
+                </div>
+                <div class="inline field">
+                    <label>Password</label>
+                    <input type="password" id="password">
+                </div>
+                <button class="ui large submit button" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+<script>require('../js/basic-auth.js');</script>
+</body>
+</html>
