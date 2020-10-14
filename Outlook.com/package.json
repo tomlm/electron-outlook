@@ -38,7 +38,14 @@
       "desktop": {
         "StartupWMClass": "Outlook for Outlook.com Desktop Application"
       },
-      "target": "deb"
+      "target": [
+        {
+          "target": "deb"
+        },
+        {
+          "target": "rpm"
+        }
+      ]
     },
     "win": {
       "target":"msi"
